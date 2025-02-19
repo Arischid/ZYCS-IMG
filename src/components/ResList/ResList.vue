@@ -16,7 +16,12 @@
       <!-- 预览图 -->
       <div class="aspect-video w-full overflow-hidden bg-muted">
         <img 
-          v-if="item.upload_blob" 
+          v-if="item.upload_result" 
+          :src="formatURL(item.upload_result)" 
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+        <img 
+          v-else
           :src="item.upload_blob" 
           class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
