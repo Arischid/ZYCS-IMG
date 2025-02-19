@@ -56,18 +56,33 @@ import ResList from '@/components/ResList/ResList.vue';
 import { RocketIcon } from '@radix-icons/vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
+interface FileItem {
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
+  upload_status: 'pending' | 'uploading' | 'success' | 'error';
+  upload_progress: number;
+  upload_result: any;
+  upload_blob: string | null;
+}
+
 // IPFS节点
 const nodeHost = ref<string>(import.meta.env.VITE_IMG_API_URL || location.origin);
 // 上传接口
 const uploadAPI = ref<string>(`${import.meta.env.VITE_IMG_API_URL || location.origin}/upload`);
 // 上传配置
-const UploadConfig = ref<any>({
-  AcceptTypes: 'image/*', // 允许上传的类型，使用逗号分隔
-  Max: 0, //多选个数，0为不限制
-  MaxSize: 20, //单个文件大小限制，单位：MB
+const UploadConfig = ref<{
+  AcceptTypes: string;
+  Max: number;
+  MaxSize: number;
+}>({
+  AcceptTypes: 'image/*',
+  Max: 0,
+  MaxSize: 20,
 });
 // 上传列表
-const fileList = ref<Array<any>>([]);
+const fileList = ref<FileItem[]>([]);
 
 // 保存到本地存储
 const saveToLocalStorage = (list: any[]) => {
