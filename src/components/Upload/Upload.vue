@@ -47,7 +47,8 @@ const UploadConfig = ref<any>(props.UploadConfig);
 const fileListChange = (v: Event) => {
   if (!v.target) return;
   const FileTarget: HTMLInputElement = v.target as HTMLInputElement;
-  const FileListArr: Array<any> = [...props.modelValue, ...Array.from(FileTarget.files || [])];
+  const originalFiles = Array.from(FileTarget.files || []);
+  const FileListArr: Array<any> = [...props.modelValue, ...originalFiles];
   
   // 过滤不符合Size的文件
   let fileListFilter = FileListArr.filter((i: any) => UploadConfig.value.MaxSize && i.size <= UploadConfig.value.MaxSize * 1024 * 1024);
@@ -59,8 +60,8 @@ const fileListChange = (v: Event) => {
     fileListFilter = Array.from(FileTarget.files || []).slice(0, UploadConfig.value.Max);
   }
 
-  // 保存文件基本信息
-  fileListFilter = fileListFilter.map(file => ({
+  // 保存文件基本信息和原始文件对象
+  fileListFilter = fileListFilter.map((file, index) => ({
     name: file.name,
     size: file.size,
     type: file.type,
@@ -68,7 +69,8 @@ const fileListChange = (v: Event) => {
     upload_status: file.upload_status || 'pending',
     upload_progress: file.upload_progress || 0,
     upload_result: file.upload_result || null,
-    upload_blob: file.type.startsWith('image/') ? URL.createObjectURL(file) : null
+    upload_blob: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+    originalFile: originalFiles[index] // 保存原始文件对象
   }));
 
   emits('update:modelValue', fileListFilter);
@@ -81,7 +83,7 @@ const fileUpload = async (FileListArr: Array<any>) => {
     if (i.upload_status === 'success') return; // 跳过已成功上传的文件
     
     const formData = new FormData();
-    formData.append('file', i);
+    formData.append('file', i.originalFile); // 使用原始文件对象
 
     // 同步上传状态
     i.upload_status = 'uploading';
