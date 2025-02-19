@@ -14,6 +14,14 @@
   <meta property="og:url" content="https://wp-cdn.4ce.cn" />
   <meta itemprop="image" content="/favicon.ico" />
   <link rel="icon" href="/favicon.ico" />
+  <script>
+    // 在页面加载时立即检查并应用主题
+    (function() {
+      const theme = localStorage.getItem('theme') || 'light';
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', theme === 'dark' || (!theme && prefersDark));
+    })();
+  </script>
 </head>
 
 <body>
